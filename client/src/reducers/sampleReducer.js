@@ -26,7 +26,9 @@ export default function sampleReducer(initialState = {}) {
             case FETCH_DONARS:
                 return {
                     ...state,
-                    loading:true
+                    loading:true,
+                    userRequests: [],
+                    responseMessage: {}
                 };
             case CLEAR_RESPONSE_MESSAGE: {
                 return {
@@ -41,42 +43,24 @@ export default function sampleReducer(initialState = {}) {
                 };
             }
             case `${GET_NEEDY_REQUEST_STATUS}${SUCCESS}`: {
-                let userRequests = action.payload;
-                let responseMessage = {};
-                if(action.payload.message) {
-                    userRequests = [];
-                    responseMessage = action.payload;
-                }
+                
+                const {allData: userRequests, responseMessage} = createFinalData(action.payload);
                 return Object.assign({}, {
                     ...state,
                     loading: false,
-                    userRequests: userRequests.map((data, index) => {
-                        return {
-                            key: data.key || index,
-                            ...data
-                        };
-                    }),
+                    userRequests,
                     responseMessage
                 });
             }
-            case `${GET_DONARS_REQUEST_STATUS}${SUCCESS}`:
-                var userRequests = action.payload;
-                var responseMessage = {};
-                if(action.payload.message) {
-                    userRequests = [];
-                    responseMessage = action.payload;
-                }
+            case `${GET_DONARS_REQUEST_STATUS}${SUCCESS}`: {
+                const {allData: userRequests, responseMessage} = createFinalData(action.payload);
                 return Object.assign({}, {
                     ...state,
                     loading: false,
-                    userRequests: userRequests.map((data, index) => {
-                        return {
-                            key: data.key || index,
-                            ...data
-                        };
-                    }),
+                    userRequests,
                     responseMessage
                 });
+            }
             case `${RAISE_NEED_REQUEST}${SUCCESS}`:
             case `${CREATE_DONATION_REQUEST}${SUCCESS}`:
                 return Object.assign({}, {
@@ -94,88 +78,45 @@ export default function sampleReducer(initialState = {}) {
                     reqRemoved: []
                 });
             case `${FETCH_DONATION_REQUEST}${SUCCESS}`: {
-                let allProviders = [];
-                let responseMessage = {};
-                // let helpingHands = [];
-                if(action.payload.message) {
-                    responseMessage = action.payload;
-                } else {
-                    allProviders = action.payload;
-                    // helpingHands = action.payload.helpingHands;
-                }
+                
+                const {allData: allProviders, responseMessage} = createFinalData(action.payload);
                 return Object.assign({}, {
                     ...state,
                     loading: false,
                     // helpingHands: helpingHands,
-                    allProviders: allProviders.map((data, index) => {
-                        return {
-                            key: data.key || index,
-                            ...data
-                        };
-                    }),
+                    allProviders,
                     responseMessage
                 });
             }
 
             case `${FETCH_NEEDS}${SUCCESS}`: {
-                let allNeeds = [];
-                let responseMessage = {};
-                // let helpingHands = [];
-                if(action.payload.message) {
-                    responseMessage = action.payload;
-                } else {
-                    allNeeds = action.payload;
-                }
+                const {allData: allNeeds, responseMessage} = createFinalData(action.payload);
                 return Object.assign({}, {
                     ...state,
                     loading: false,
-                    allNeeds: allNeeds.map((data, index) => {
-                        return {
-                            key: data.key || index,
-                            ...data
-                        };
-                    }),
+                    allNeeds,
                     responseMessage
                 });
             }
 
             case `${FETCH_HELPING_HANDS}${SUCCESS}`: {
-                let areawiseHelpingHands = [];
-                let helpingHandResponse = {};
-                if(action.payload.message) {
-                    helpingHandResponse = action.payload;
-                } else {
-                    areawiseHelpingHands = action.payload;
-                }
+               
+                const {allData: areawiseHelpingHands, responseMessage: helpingHandResponse} = createFinalData(action.payload);
                 return Object.assign({}, {
                     ...state,
                     loading: false,
-                    areawiseHelpingHands: areawiseHelpingHands.map((data, index) => {
-                        return {
-                            key: data.key || index,
-                            ...data
-                        };
-                    }),
+                    areawiseHelpingHands,
                     helpingHandResponse
                 });
             }
             case `${FETCH_DONARS}${SUCCESS}`: {
-                let areawiseDonars = [];
-                let donarsResponse = {};
-                if(action.payload.message) {
-                    donarsResponse = action.payload;
-                } else {
-                    areawiseDonars = action.payload;
-                }
+
+                const {allData: areawiseDonars, donarsResponse} = createFinalData(action.payload);
                 return Object.assign({}, {
                     ...state,
                     loading: false,
-                    areawiseDonars: areawiseDonars.map((data, index) => {
-                        return {
-                            key: data.key || index,
-                            ...data
-                        };
-                    }),
+                    // helpingHands: helpingHands,
+                    areawiseDonars,
                     donarsResponse
                 });
             }
@@ -236,5 +177,40 @@ export default function sampleReducer(initialState = {}) {
             default:
                 return state;
         }
+    };
+}
+
+
+function createFinalData(payload) {
+    let allData = [];
+    let responseMessage = {};
+    // let helpingHands = [];
+    if(payload.message) {
+        responseMessage = payload;
+    } else if(Array.isArray(payload)) {
+        allData = payload;
+    } else {
+        const allAreas = Object.keys(payload);
+        if(allAreas.length > 1) {
+            allAreas.forEach((item) => {
+                payload[item].forEach((subItem) => {
+                    allData.push({
+                        ...subItem,
+                        areaName: item
+                    });
+                });
+            });
+        } else {
+            allData = Object.values(payload)[0];
+        }
+    }
+    return {
+        allData: allData.map((data, index) => {
+            return {
+                key: data.key || index,
+                ...data
+            };
+        }),
+        responseMessage
     };
 }

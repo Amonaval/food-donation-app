@@ -43,7 +43,7 @@ class NeedsTable extends React.Component {
                 serveAs: timeSlots[item.serveAs]
             };
         });
-        const defaultcolumns = [
+        let defaultcolumns = [
             {
                 title: 'Date',
                 dataIndex: 'date',
@@ -98,7 +98,14 @@ class NeedsTable extends React.Component {
                 )
             }
         ];
-
+        if(allNeeds[0] && allNeeds[0].areaName) {
+            defaultcolumns.unshift({
+                title: 'Area Name',
+                dataIndex: 'areaName',
+                key: 'areaName',
+                width: '150px'
+            });
+        }
         return(<div className="request-table">
             <Table
                 bordered

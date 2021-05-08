@@ -46,7 +46,7 @@ class HelpingHandView extends React.Component {
                 </Form>
                 {auth.user.username && <div>
                     <Button disabled={!(selectedCity || selectedArea)} className="ant-btn ant-btn-primary" onClick={fetchProviders}>See donations around</Button>
-                    {selectedArea && <RequestTable name={auth.user.username}/>}
+                    {(selectedCity || selectedArea) && <RequestTable name={auth.user.username}/>}
                     {(reqAdded.length > 0 || reqRemoved.length > 0) && <Button disabled={!(selectedCity || selectedArea)} className="ant-btn ant-btn-primary confirm-helping-hand-btn" onClick={confirmProvideRequest}>Confirm Changes</Button>}
                 </div>}
             </div>);

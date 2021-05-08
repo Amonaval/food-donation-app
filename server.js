@@ -18,7 +18,7 @@ var saveGameState = require('./utils/saveGameState');
 
 
 var {fetchUsersData, createProvideRequest, getDataByArea, fetchReisteredHelpingHand,
-   registerHelpingHand, confirmProvideRequest, fetchUserStatus, confirmNeedRequest, 
+   registerHelpingHand, confirmProvideRequest, fetchUserStatus, fetchNeedyStatus, confirmNeedRequest, 
    registerDonar, createNeedRequest, fetchNeeds, fetchReisteredDonars} = cardUtils;
 
 saveGameState()
@@ -46,7 +46,7 @@ app.use(express.static(path.join(__dirname, './client/dist')));
 
 app.post('/api/createProvideRequest', async function(req, res) {
    const newProviderData = await createProvideRequest(req.body);
-   res.status(200).send({message: 'Good Work!! We have registered your help. Awaiting confirmation from helping hand.'})
+   res.status(200).send({message: 'Good Work!! We have registered your help. Awaiting confirmation from needy.'})
 })
 
 app.post('/api/createNeedRequest', async function(req, res) {
@@ -66,46 +66,96 @@ app.post('/api/registerDonar', async function(req, res) {
    res.status(200).send({message: 'You are now registered donar in this area'})
 })
 
+async function getDataByAreas({req, onSuccess}) {
+   const areaData = await getDataByArea(req.query); 
+   let isInValid = !areaData || areaData.status == 'fail';
+   // if(!req.query.areaName) {
+   //    isInValid = !areaData || areaData.length === 0;
+   // }
+   const onlyCities = !req.query.areaName;
+   console.log(areaData)
+   if(isInValid) {
+      return areaData;
+   } else {
+      let allProviders = [];
+      if(onlyCities) {
+         const allUsers = [];
+         areaData.forEach((item) => {
+            allUsers.push(onSuccess(item));
+         })
+         allProviders = await Promise.all(allUsers);
+         console.log('1',allProviders)
+      } else {
+         allProviders = [await onSuccess(areaData)];
+         console.log('2',allProviders)
+      }
+      if(allProviders.message) {
+         return allProviders;
+      }
+      const data = {};
+      allProviders.forEach((item) => {
+         if(item) {
+            const key = Object.keys(item);
+            data[key] = item[key];
+         }
+      });
+      console.log('3', data)
+      return data;
+   }
+}
 
 app.get('/api/fetchProviders', async function (req, res) {
-   const areaData = await getDataByArea(req.query); 
-   if(!areaData || areaData.area === null) {
-      res.status(200).send({message: 'No Provider found at this place'});
+   const payload = {
+      onSuccess: fetchUsersData,
+      req
+   }
+   const result = await getDataByAreas(payload);
+   if(result.message) {
+      res.status(result.code).send({message: result.message});
    } else {
-      const allProviders = await fetchUsersData(areaData);
-      res.status(200).send(allProviders);
+      res.status(200).send(result);
    }
 });
 
 
 app.get('/api/fetchNeeds', async function (req, res) {
-   const areaData = await getDataByArea(req.query); 
-   if(!areaData || areaData.area === null) {
-      res.status(200).send({message: 'No Need Request around this place'});
+
+   const payload = {
+      onSuccess: fetchNeeds,
+      req
+   }
+   const result = await getDataByAreas(payload);
+   if(result.message) {
+      res.status(result.code).send({message: result.message});
    } else {
-      const allNeeds = await fetchNeeds(areaData);
-      res.status(200).send(allNeeds);
+      res.status(200).send(result);
    }
 });
 
 
 app.get('/api/fetchHelpingHand', async function (req, res) {
-   const areaData = await getDataByArea(req.query); 
-   if(!areaData || areaData.area === null) {
-      res.status(200).send({message: 'No Registered Helping hand serve this area'});
+   const payload = {
+      onSuccess: fetchReisteredHelpingHand,
+      req
+   }
+   const result = await getDataByAreas(payload);
+   if(result.message) {
+      res.status(result.code).send({message: result.message});
    } else {
-      const helpingHands = await fetchReisteredHelpingHand(areaData);
-      res.status(200).send(helpingHands);
+      res.status(200).send(result);
    }
 });
 
 app.get('/api/fetchDonars', async function (req, res) {
-   const areaData = await getDataByArea(req.query); 
-   if(!areaData || areaData.area === null) {
-      res.status(200).send({message: 'No Registered Donars serve this area'});
+   const payload = {
+      onSuccess: fetchReisteredDonars,
+      req
+   }
+   const result = await getDataByAreas(payload);
+   if(result.message) {
+      res.status(result.code).send({message: result.message});
    } else {
-      const allRegisteredDonars = await fetchReisteredDonars(areaData);
-      res.status(200).send(allRegisteredDonars);
+      res.status(200).send(result);
    }
 });
 
@@ -134,6 +184,18 @@ app.get('/api/fetchUserStatus', async function(req, res) {
    }
 })
 
+app.get('/api/fetchNeedyStatus', async function(req, res) {
+   let usersData = await fetchNeedyStatus(req.query);
+   if(!usersData) {
+      res.status(200).send({message: 'You have no pending request'});
+   } else {
+      if(!Array.isArray(usersData)) {
+         usersData = [usersData];
+      }
+      res.status(200).send(usersData);
+   }
+})
+
 
 app.get('/*', function (req, res) {
    res.sendFile(path.join(__dirname, './client/dist', 'index.html'));
@@ -146,6 +208,4 @@ app.use((req, res, next) => {
 })
 
 
-app.listen(PORT, 'localhost', () => {
-  console.log(`Server running at http://localhost:`, PORT);
-})
+app.listen(PORT, '0.0.0.0')

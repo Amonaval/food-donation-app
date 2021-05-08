@@ -17,7 +17,7 @@ class RequestTable extends React.Component {
     confirmProvider(record) {
         this.props.addRequest({key: record.key, name: this.props.name, tableName: 'allProviders'});
     }
-    
+
     cancelProvider(record) {
         this.props.removeRequest({key: record.key, tableName: 'allProviders'});
     }
@@ -31,12 +31,13 @@ class RequestTable extends React.Component {
         }
         allProviders = allProviders.map((item) => {
             return {
-                ...item, 
+                ...item,
                 date: item.date.split('T')[0],
                 serveAs: timeSlots[item.serveAs]
             };
         });
-        const defaultcolumns = [
+
+        let defaultcolumns = [
             {
                 title: 'Date',
                 dataIndex: 'date',
@@ -92,6 +93,14 @@ class RequestTable extends React.Component {
                 )
             }
         ];
+        if(allProviders[0] && allProviders[0].areaName) {
+            defaultcolumns.unshift({
+                title: 'Area Name',
+                dataIndex: 'areaName',
+                key: 'areaName',
+                width: '150px'
+            });
+        }
 
         return(<div className="request-table">
             <Table
@@ -109,7 +118,7 @@ class RequestTable extends React.Component {
 const mapStateToProps = (state, ownProps) => {
     const {sampleReducer = {}} = state;
     const {allProviders = []} = sampleReducer;
-    
+
     return {
         allProviders,
         name: ownProps.name

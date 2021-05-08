@@ -97,7 +97,7 @@ class RaiseNeedView extends React.Component {
                             <Input.TextArea value={this.props.purpose} onChange={(e) => this.setFormItem(e.target.value, 'purpose')} />
                         )}
                     </Form.Item>
-                    <Button disabled={!(selectedCity || selectedArea)} className="ant-btn ant-btn-primary confirm-helping-hand-btn" onClick={this.props.raiseNeed}>Raise Need</Button>} 
+                    <Button disabled={!(selectedCity || selectedArea)} className="ant-btn ant-btn-primary confirm-helping-hand-btn" onClick={this.props.raiseNeed}>Raise Need</Button>
                 </Form>
                 <div>
                     <DonarsTable name={auth.user.username}/>

@@ -149,18 +149,18 @@ module.exports = function () {
          // To fetch country then get state thn city -- as state, city can be duplicate
          let donarsInArea = await Areas.findOne({_id: areaObj._id}).populate('registeredDonars').exec();
         if(donarsInArea && donarsInArea.registeredDonars.length > 0) {
-            return donarsInArea.registeredDonars;
+            return {[areaObj.name]: donarsInArea.registeredDonars}
         } else {
-            return {message: 'No Donars found at this place', area: null}
+            return {code: 200, status: 'fail', message: 'No Donars found at this place', area: null}
         }
     }
-    async function fetchNeeds() {
+    async function fetchNeeds(areaObj) {
          // To fetch country then get state thn city -- as state, city can be duplicate
          let raisedNeedInArea = await Areas.findOne({_id: areaObj._id}).populate('raisedNeeds').exec();
         if(raisedNeedInArea && raisedNeedInArea.raisedNeeds.length > 0) {
-            return raisedNeedInArea.raisedNeeds;
+            return {[areaObj.name]: raisedNeedInArea.raisedNeeds}
         } else {
-            return {message: 'No Needs around this area', area: null}
+            return {code: 200, status: 'fail', message: 'No Needs around this area', area: null}
         }
     }
 
@@ -169,9 +169,9 @@ module.exports = function () {
          let providersInArea = await Areas.findOne({_id: areaObj._id}).populate('providers').exec();
          // let providersInArea = await Areas.findOne({name: areaName}).populate('providers').exec();
         if(providersInArea && providersInArea.providers.length > 0) {
-            return providersInArea.providers;
+            return {[areaObj.name]: providersInArea.providers};
         } else {
-            return {message: 'No Provider found at this place', area: null}
+            return {code: 200, status: 'fail', message: 'No Provider found at this place', area: null}
         }
     }
 
@@ -180,33 +180,36 @@ module.exports = function () {
         let helpingHandInArea = await Areas.findOne({_id: areaObj._id}).populate('helpingHandRegistered').exec();
         // let providersInArea = await Areas.findOne({name: areaName}).populate('providers').exec();
         // gameData = gameData.populate('areas').exec();
-        console.log(helpingHandInArea);
        if(helpingHandInArea && helpingHandInArea.helpingHandRegistered.length > 0) {
-           return helpingHandInArea.helpingHandRegistered;
+           return {[areaObj.name]: helpingHandInArea.helpingHandRegistered};;
        } else {
-           return {message: 'No helping hand around this area for support', area: null}
+           return {code: 200, status: 'fail', message: 'No helping hand around this area for support', area: null}
        }
    }
 
     
 
     async function getDataByArea({country, state, city, areaName}) {
-        
-        if(country && state && city && areaName) {
+        if(country && state && (city || areaName)) {
             try {
                 let provideCountry = await Country.findOne({name: country}).populate('states').exec();
                 stateObj = provideCountry.states.find((item) => item.name === state);
                 let provideState = await State.findOne({_id: stateObj._id}).populate('cities').exec();
                 cityObj = provideState.cities.find((item) => item.name === city);
                 let provideCity = await City.findOne({_id: cityObj._id}).populate('areas').exec();
-                areaObj = provideCity.areas.find((item) => item.name === areaName);
+                
+                if(areaName) {
+                    areaObj = provideCity.areas.find((item) => item.name === areaName);
+                } else {
+                    areaObj = provideCity.areas;
+                }
                 return areaObj;
             }
             catch {
-                return {message: 'No Provider found at this place', area: null}
+                return {code: 200, status: 'fail', message: 'No data found at this place', area: null}
             }
         } else {
-            return {message: 'Invalid Inputs'}
+            return {code: 404, status: 'fail', message: 'Invalid Inputs'}
         }
     }
 

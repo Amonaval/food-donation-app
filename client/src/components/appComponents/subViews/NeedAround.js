@@ -57,7 +57,7 @@ class NeedAroundView extends React.Component {
                 </Form>
                 {auth.user.username && <div>
                     <Button disabled={!(selectedCity || selectedArea)} className="ant-btn ant-btn-primary" onClick={fetchNeeds}>Check Needs</Button>
-                    {selectedArea && <NeedsTable name={auth.user.username}/>}
+                    {(selectedCity || selectedArea) && <NeedsTable name={auth.user.username}/>}
                     {(reqAdded.length > 0 || reqRemoved.length > 0) && <Button disabled={!(selectedCity || selectedArea)} className="ant-btn ant-btn-primary confirm-helping-hand-btn" onClick={this.confirmNeedRequest}>Confirm Donation</Button>}
 
                 </div>}       
