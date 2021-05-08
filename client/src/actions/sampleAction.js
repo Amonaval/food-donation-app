@@ -12,6 +12,11 @@ export function getUserStatus(data) {
     return {type: actions.GET_DONARS_REQUEST_STATUS, payload: data};
 }
 
+export function getNeedyStatus(data) {
+    return {type: actions.GET_NEEDY_REQUEST_STATUS, payload: data};
+}
+
+
 export function clearResponseMessage() {
     return {type: actions.CLEAR_RESPONSE_MESSAGE};
 }
@@ -81,6 +86,12 @@ export function confirmNeedRequestSuccessful(data) {
 export function getUserStatusSuccessful(data) {
     return {type: `${actions.GET_DONARS_REQUEST_STATUS}${actions.API_SUFFIX.SUCCESS}`, payload: data};
 }
+
+export function getNeedyStatusSuccessful(data) {
+    return {type: `${actions.GET_NEEDY_REQUEST_STATUS}${actions.API_SUFFIX.SUCCESS}`, payload: data};
+}
+
+
 
 export function getHelpingHandsSuccessful(data) {
     return {type: `${actions.FETCH_HELPING_HANDS}${actions.API_SUFFIX.SUCCESS}`, payload: data};

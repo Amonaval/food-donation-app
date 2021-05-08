@@ -8,7 +8,19 @@ class HelpingHandsTable extends React.Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            isModalVisible: false
+        };
     }
+
+    componentDidUpdate(prevProps) {
+        const {donarsResponse = {}} = this.props;
+        const {donarsResponse: prevResponseMessage = {}} = prevProps;
+        if(!isEmpty(donarsResponse.message) && donarsResponse.message !== prevResponseMessage.message) {
+            this.setState({isModalVisible: true});
+        }
+    }
+    
     render() {
 
         let {areawiseDonars = [], donarsResponse, loading} = this.props;
@@ -45,16 +57,21 @@ class HelpingHandsTable extends React.Component {
             }
         ];
 
-        return(<div className="helping-hand-table">
-            {loading && <Spin />}
-            {!loading && donarsResponse && <h3>{donarsResponse.message}</h3>}
-            {!isEmpty(areawiseDonars) && <Table
-                bordered
-                dataSource={areawiseDonars}
-                columns={defaultcolumns}
-                pagination={areawiseDonars.length > 10}/>}
+        return(
+            <Spin spinning={loading}>
+                <div className="helping-hand-table">
+                    {!loading && donarsResponse &&
+                    <Modal title="Request Confirm" visible={this.state.isModalVisible} onOk={() => this.setState({isModalVisible: false})}>
+                        <p>{donarsResponse.message}</p>
+                    </Modal>}
+                    {!isEmpty(areawiseDonars) && <Table
+                        bordered
+                        dataSource={areawiseDonars}
+                        columns={defaultcolumns}
+                        pagination={areawiseDonars.length > 10}/>}
 
-        </div>);
+                </div>
+            </Spin>);
 
     }
 }
@@ -64,7 +81,7 @@ class HelpingHandsTable extends React.Component {
 const mapStateToProps = (state, ownProps) => {
     const {sampleReducer = {}} = state;
     const {areawiseDonars = [], donarsResponse = {}, loading} = sampleReducer;
-    
+
     return {
         areawiseDonars,
         loading,

@@ -23,7 +23,10 @@ html{
 
     .landing-page-btns, .btn-group{
       margin-left: calc(50% - 200px);
-      width: 400px;
+      width: 500px;
+      .need-btn{
+        width: 250px;
+      } 
     }
 
     .section-category{
@@ -104,6 +107,9 @@ html{
 .auth-forms{
   max-width: 500px;
 }
+.geo-location-container label{
+  font-size: 16px;
+}
   
 .primary-button{
     padding: 5px 10px;
@@ -122,10 +128,6 @@ html{
     background-color: #aad8ff !important;
   }
 
-  .log-out-btn{
-    margin-left: 30px;
-  }
-  
   .back-game-btn{
     margin-left: 10px;
   }
@@ -178,7 +180,7 @@ html{
         color: #ddd;
     }
     .ant-table-thead > tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td, .ant-table-tbody > tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td, .ant-table-thead > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td, .ant-table-tbody > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td,
-    input, .ant-btn span, .ant-form-item-control span, .ant-form-item-control .ant-select-selection-selected-value {
+    input, .ant-btn span, .ant-form-item-control span, .ant-form-item-control .ant-select-selection-selected-value, .mapboxgl-ctrl-geocoder--suggestion div {
       color: #222 !important;
     }
 
@@ -197,6 +199,9 @@ html{
 
     .ant-btn-primary {
         background-color: lightgray;
+    }
+    .ant-btn-primary:hover:enabled {
+      background-color: gray;
     }
     .ant-btn-primary.active{
         background-color: #00D1E1;
@@ -233,6 +238,13 @@ html{
 }
 }
 
+.unconfirmed-list, .confirmed-list {
+  span {
+    padding-left: 5px;
+  }
+  margin-bottom: 10px;
+}
+
 
 /************** Caruousel ****************/
 
@@ -249,10 +261,71 @@ html{
     color: #fff;
   }
 
+  .geocoder {
+    position: absolute;
+    z-index: 1;
+    width: 50%;
+    left: 50%;
+    margin-left: -25%;
+    top: 10px;
+    }
+    .mapboxgl-ctrl-geocoder {
+    min-width: 100%;
+    }
+    #map {
+    margin-top: 75px;
+    height: 200px;
+    width: 200px;
+    }
 
+    // .map-comp > div {
+    //   height: 200px !important;
+    //   width: 200px !important;
+    // }
+    .map-comp {
+      width: 91px;
+      float: right;
+      margin-top: -30px;
+    }
+    .detail-form{
+      clear: both;
+      margin-top: 20px;
+    }
+    .geo-loc{
+      position: relative  !important;
+      color: #222 !important;
+      .suggestions{
+        color: #222 !important;
+      }
+    }
+
+    .mapboxgl-ctrl-geocoder--input{
+      height: 40px;
+    }
+    .mapboxgl-ctrl-geocoder--icon-search{
+      top: 10px
+    }
+    .mapboxgl-ctrl-geocoder--icon-close{
+      margin-top: 5px;
+    }
 
 
   
+   
+  @media screen and (min-width: 721px) {
+      
+  .map-comp {
+    display: none;
+    position: absolute;
+    left: 600px;
+  }
+  .map-comp > div {
+      height: 300px !important;
+      width: 300px !important;
+    }
+    
+  }
+
   @media screen and (max-width: 720px) {
     .navbar-menu{
       display: block !important;
@@ -262,6 +335,15 @@ html{
     .container {
       max-width: calc(100% - 10px);
       margin-left: 10px;
+    }
+
+    .container .landing-page-btns, .container .btn-group {
+      margin: auto;
+      width: 380px;
+    }
+    .container .landing-page-btns .donate-btn, .container .landing-page-btns .need-btn {
+      width: 190px;
+      float: left;
     }
 
     .aboutus{
@@ -303,9 +385,18 @@ html{
         padding: 0px 5px;
       }
       .ant-btn.custom-links span {
-        font-size: 15px;
+        font-size: 16px;
       }
 
+    }
+
+    
+    .log-out-btn{
+      margin-left: 15px;
+    }
+    
+    .section.auth {
+      margin-top: 40px;
     }
 }
 

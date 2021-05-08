@@ -2,19 +2,25 @@
 
 
 import {CREATE_DONATION_REQUEST, FETCH_DONATION_REQUEST, API_SUFFIX, GET_DONARS_REQUEST_STATUS, FETCH_HELPING_HANDS,
-    RAISE_NEED_REQUEST, FETCH_NEEDS,
-    REMOVE_REQUEST, ADD_REQUEST, CONFIRM_REQUEST, CLEAR_RESPONSE_MESSAGE, FETCH_DONARS} from '../actions/actionTypes';
+    RAISE_NEED_REQUEST, FETCH_NEEDS, CONFIRM_NEED_REQUEST,
+    REMOVE_REQUEST, ADD_REQUEST, CONFIRM_REQUEST, CLEAR_RESPONSE_MESSAGE, FETCH_DONARS, GET_NEEDY_REQUEST_STATUS} from '../actions/actionTypes';
 
 const {SUCCESS} = API_SUFFIX;
 
 export default function sampleReducer(initialState = {}) {
     return (state = initialState, action) => {
+
+        if(!action.payload) {
+            action.payload = {};
+        }
         switch (action.type) {
             case CREATE_DONATION_REQUEST:
             case FETCH_DONATION_REQUEST:
             case GET_DONARS_REQUEST_STATUS:
+            case GET_NEEDY_REQUEST_STATUS:
             case FETCH_HELPING_HANDS:
             case CONFIRM_REQUEST:
+            case CONFIRM_NEED_REQUEST:
             case RAISE_NEED_REQUEST:
             case FETCH_NEEDS:
             case FETCH_DONARS:
@@ -33,6 +39,25 @@ export default function sampleReducer(initialState = {}) {
                     reqAdded: [],
                     reqRemoved: []
                 };
+            }
+            case `${GET_NEEDY_REQUEST_STATUS}${SUCCESS}`: {
+                let userRequests = action.payload;
+                let responseMessage = {};
+                if(action.payload.message) {
+                    userRequests = [];
+                    responseMessage = action.payload;
+                }
+                return Object.assign({}, {
+                    ...state,
+                    loading: false,
+                    userRequests: userRequests.map((data, index) => {
+                        return {
+                            key: data.key || index,
+                            ...data
+                        };
+                    }),
+                    responseMessage
+                });
             }
             case `${GET_DONARS_REQUEST_STATUS}${SUCCESS}`:
                 var userRequests = action.payload;
@@ -59,6 +84,7 @@ export default function sampleReducer(initialState = {}) {
                     loading: false,
                     responseMessage: action.payload
                 });
+            case `${CONFIRM_NEED_REQUEST}${SUCCESS}`:
             case `${CONFIRM_REQUEST}${SUCCESS}`:
                 return Object.assign({}, {
                     ...state,

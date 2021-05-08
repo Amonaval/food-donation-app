@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import {Auth} from 'aws-amplify';
-import { Switch } from 'antd';
+import { Icon } from 'antd';
 import { NavLink } from 'react-router-dom';
 
 export default class Navbar extends Component {
@@ -38,6 +38,9 @@ export default class Navbar extends Component {
                                         Log out
                                     </NavLink>
                                 )}
+                                {<NavLink to="/" className="button is-light log-out-btn">
+                                    <Icon type="home" />
+                                </NavLink>}
                                 {!isAuthenticated && !user && (
                                     <Fragment>
                                         <NavLink to="/aboutus" className="button is-light">

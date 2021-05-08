@@ -1,8 +1,8 @@
 import React from 'react';
-import {Form, Button, InputNumber, Spin} from 'antd';
+import {Form, Button, InputNumber, Spin, Modal, Icon, Popover, Tooltip } from 'antd';
 import {NavLink} from 'react-router-dom';
 import PropTypes from 'prop-types';
-import {bindAll} from 'lodash';
+import {bindAll, isEmpty} from 'lodash';
 
 import HelpingHandComponent from './subComponents/HelpingHandComponent.Connect';
 import DonarComponent from './subComponents/DonarsComponent.Connect';
@@ -27,12 +27,20 @@ class AppComponent extends React.Component {
                 postal_code: 'short_name'
             },
             showScreen: '',
-            searchMob: null
+            searchMob: null,
+            isModalVisible: false
         };
-        bindAll(this, ['geolocate', 'createButtonClass', 'changeScreen', 'initAutocomplete']);
+        bindAll(this, ['geolocate', 'createButtonClass', 'changeScreen', 'initAutocomplete', 'handleOk']);
         this.autocomplete = null;
     }
 
+    componentDidUpdate(prevProps) {
+        const {responseMessage = {}} = this.props;
+        const {responseMessage: prevResponseMessage = {}} = prevProps;
+        if(!isEmpty(responseMessage.message) && responseMessage.message !== prevResponseMessage.message) {
+            this.setState({isModalVisible: true});
+        }
+    }
 
     componentDidMount() {
         const googleMapScript = document.createElement('script');
@@ -44,6 +52,10 @@ class AppComponent extends React.Component {
         //     // this.marker = this.createMarker()
         //     this.initAutocomplete();
         // });
+    }
+
+    handleOk() {
+        this.setState({isModalVisible: false});
     }
 
     initAutocomplete() {
@@ -111,7 +123,7 @@ class AppComponent extends React.Component {
                 'mobileNo': '',
                 'area': locationData.selectedArea});
 
-            if(this.state.selectedArea && this.state.showScreen === 'helpinghand') {
+            if((locationData.selectedCity || locationData.selectedArea) && this.state.showScreen === 'helpinghand') {
                 // this.fetchProviders();
             }
             clearTimeout(timer1);
@@ -140,47 +152,63 @@ class AppComponent extends React.Component {
             user,
             showScreen
         };
-
+        const aboutDonate = 'For those who wants to initate food donation or fullfill open request of food around your area';
+        const aboutNeed = 'For those who wants to initate food requirement or confirm from exisitng food donations request around your area';
         return (
-            <div className="container">
-                {!this.props.flow && <p className="control landing-page-btns">
-                    <NavLink to="/app/donar">
-                        <Button type="button" className="ant-btn ant-btn ant-btn-link custom-links" >I want to donate</Button>
-                    </NavLink>
-                    <NavLink to="/app/helpinghand">
-                        <Button type="button" className="ant-btn ant-btn ant-btn-link custom-links" >Helping Hand</Button>
-                    </NavLink>
-                </p>}
-                {this.props.flow === 'donar' && <DonarComponent
-                    changeScreen={this.changeScreen}
-                    createButtonClass={this.createButtonClass}
-                    commonProps={commonProps} />}
-                {this.props.flow === 'helpinghand' && <HelpingHandComponent
-                    changeScreen={this.changeScreen}
-                    createButtonClass={this.createButtonClass}
-                    commonProps={commonProps} />}
+            <Spin spinning={this.props.loading}>
+                <div className="container">
+                    {!this.props.flow && <p className="control landing-page-btns">
+                        <div className="donate-btn">
+                            <NavLink to="/app/donar">
+                                <Button type="button" className="ant-btn ant-btn ant-btn-link custom-links" >I want to donate</Button>
+                            </NavLink>
+                            <Popover content={aboutDonate} title="Donate food">
+                                <Icon type="info-circle" />
+                            </Popover>
+                            
+                        </div>
+                        <div className="need-btn">
+                            <NavLink to="/app/helpinghand">
+                                <Button type="button" className="ant-btn ant-btn ant-btn-link custom-links" >I am in need</Button>
+                            </NavLink>
+                            <Popover content={aboutNeed} title="Need food">
+                                <Icon type="info-circle" />
+                            </Popover>
+                            
+                        </div>
+                    </p>}
+                    {this.props.flow === 'donar' && <DonarComponent
+                        changeScreen={this.changeScreen}
+                        createButtonClass={this.createButtonClass}
+                        commonProps={commonProps} />}
+                    {this.props.flow === 'helpinghand' && <HelpingHandComponent
+                        changeScreen={this.changeScreen}
+                        createButtonClass={this.createButtonClass}
+                        commonProps={commonProps} />}
 
-                {/* <div>{ad.text}</div>
-                    <div id="locationField">
-                        <input id="autocomplete"
-                            placeholder="Enter your address"
-                            onFocus={this.geolocate}
-                            type="text"/>
-                    </div>
+                    {/* <div>{ad.text}</div>
+                        <div id="locationField">
+                            <input id="autocomplete"
+                                placeholder="Enter your address"
+                                onFocus={this.geolocate}
+                                type="text"/>
+                        </div>
 
-                    {addressComps && addressComps.map((item) => {
-                        if(componentForm[item.types[0]]) {
-                            return <div>{item[componentForm[item.types[0]]]}</div>;
-                        }
-                        return null;
-                    })} */}
+                        {addressComps && addressComps.map((item) => {
+                            if(componentForm[item.types[0]]) {
+                                return <div>{item[componentForm[item.types[0]]]}</div>;
+                            }
+                            return null;
+                        })} */}
 
 
-                {this.props.loading && <Spin />}
-                {!this.props.loading && responseMessage && <h3>{responseMessage.message}</h3>}
-
-            </div>
-
+                    {/* {this.props.loading && } */}
+                    {!this.props.loading && responseMessage &&
+                    <Modal title="Request Confirm" visible={this.state.isModalVisible} onOk={this.handleOk}>
+                        <p>{responseMessage.message}</p>
+                    </Modal>}
+                </div>
+            </Spin>
         );
     }
 }

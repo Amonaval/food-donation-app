@@ -17,6 +17,8 @@ import styles from '../styles/food-app.less';
 // import {ErrorBoundary} from './layout/errorPages/errorBoundary';
 import Amplify from 'aws-amplify';
 import config from './config';
+import 'mapbox-gl/dist/mapbox-gl.css';
+import 'react-map-gl-geocoder/dist/mapbox-gl-geocoder.css'
 
 moment.tz.setDefault('Europe/London');
 const appStore = store;

@@ -7,31 +7,44 @@ import moment from 'moment';
 import AddressFormComponent from './AddressFormView';
 import DonarsTable from '../../tables/DonarsTable';
 import ContactVerifyView from './ContactVerification';
+import {timeSlots} from '../../../consts';
+import {checkIfErrors} from '../../../utils';
+
 
 const Option = Select.Option;
-const timeSlots = {
-    LUNCH: '11am - 1pm',
-    SNACKS: '3pm - 6pm',
-    DINNER: '7pm - 9pm'
-};
 
 
 class RaiseNeedView extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-        };
-        bindAll(this, ['setFormItem']);
+        this.state = {};
+        bindAll(this, ['setFormItem', 'raiseNeed']);
     }
 
     setFormItem(val, item) {
         this.props.setFormItem(val, item);
     }
 
+    raiseNeed() {
+        const {form} = this.props;
+        form.validateFields();
+        const errorInfo = form.getFieldsError();
+        if(checkIfErrors(errorInfo)) {
+            return;
+        }
+        this.props.raiseNeed();
+    }
+
+    componentDidUpdate(prevProps) {
+        if(prevProps.selectedArea !== this.props.selectedArea) {
+            // this.props.fetchDonars();
+        }
+    }
+
     render() {
 
-        const {auth, setFormItem, showScreen} = this.props;
-        const {selectedCountry, selectedState, selectedCity, selectedArea, getFieldDecorator} = this.props;
+        const {auth, setFormItem, showScreen, getFieldDecorator, location} = this.props;
+        const {selectedCountry, selectedState, selectedCity, selectedArea} = location;
 
         return(
 
@@ -52,12 +65,12 @@ class RaiseNeedView extends React.Component {
                         getFieldDecorator={getFieldDecorator}
                         showScreen={showScreen}
                     />
-                    <Button className="ant-btn ant-btn-primary" onClick={this.props.fetchDonars}>See Donars</Button>
+                    {/* <Button className="ant-btn ant-btn-primary" onClick={this.props.fetchDonars}>See Donars</Button> */}
                     <ContactVerifyView setFormItem={setFormItem} getFieldDecorator={getFieldDecorator} />
 
                     <Form.Item label="Feed how many people">
                         {getFieldDecorator('serves', {rules: [{required: true, message: 'Approx people it can serve'}]})(
-                            <InputNumber value={this.props.serves} onChange={(val) => this.setFormItem(val, 'serves')} />
+                            <InputNumber value={this.props.serves} min="0" onChange={(val) => this.setFormItem(val, 'serves')} />
                         )}
                     </Form.Item>
 
@@ -84,7 +97,7 @@ class RaiseNeedView extends React.Component {
                             <Input.TextArea value={this.props.purpose} onChange={(e) => this.setFormItem(e.target.value, 'purpose')} />
                         )}
                     </Form.Item>
-                    <Button className="ant-btn ant-btn-primary confirm-helping-hand-btn" onClick={this.props.raiseNeed}>Raise Need</Button> 
+                    <Button disabled={!(selectedCity || selectedArea)} className="ant-btn ant-btn-primary confirm-helping-hand-btn" onClick={this.props.raiseNeed}>Raise Need</Button>} 
                 </Form>
                 <div>
                     <DonarsTable name={auth.user.username}/>

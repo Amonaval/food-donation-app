@@ -6,11 +6,19 @@ import {bindAll} from 'lodash';
 class ContactVerifyView extends React.Component {
     constructor(props) {
         super(props);
-        bindAll(this, ['setFormItem']);
+        bindAll(this, ['setFormItem', 'mobileNoValidator']);
     }
 
     setFormItem(val, item) {
         this.props.setFormItem(val, item);
+    }
+
+    mobileNoValidator(rule, value, callback) {
+        if(value.match(/^([+]\d{2}[ ])?\d{10}$/g) != null){
+            callback();
+        } else {
+            callback('Invalid contact no');
+        }
     }
 
     render() {
@@ -21,21 +29,22 @@ class ContactVerifyView extends React.Component {
                 <Form.Item label="Contact No">
                     {getFieldDecorator('mobileNo', {rules: [
                         {required: true, message: 'Contact no is required'},
-                        {
-                            required: true,
-                            type: 'regexp',
-                            pattern: new RegExp(/^([0|\+[0-9]{1,5})?([7-9][0-9]{9})$/g),
-                            message: 'Wrong format!'
-                        }]
+                        {validator: (rule, index, callback) => {
+                            if(this.mobileNoValidator) {
+                                this.mobileNoValidator(rule, index, callback, this.props, this.form);
+                            } else{
+                                callback();
+                            }
+                        }}]
                     })(
                         <Input onChange={(e) => this.setFormItem(parseInt(e.target.value, 10), 'mobileNo')} />
                     )}
                 </Form.Item>
-                <Form.Item label="OTP">
+                {/* <Form.Item label="OTP">
                     {getFieldDecorator('otp', {rules: [{required: true, message: 'Please enter OTP'}]})(
                         <InputNumber onChange={(val) => this.setFormItem(val, 'otp')} />
                     )}
-                </Form.Item>
+                </Form.Item> */}
             </React.Fragment>
 
         );

@@ -1,6 +1,6 @@
 import {connect} from 'react-redux';
 import HelpingHandComp from './HelpingHandComponent';
-import {fetchProviders, confirmRequest, raiseNeed, fetchDonars, clearResponseMessage} from '../../../actions/sampleAction';
+import {fetchProviders, confirmRequest, raiseNeed, getNeedyStatus, fetchDonars, clearResponseMessage} from '../../../actions/sampleAction';
 import {withRouter} from 'react-router-dom';
 
 const mapStateToProps = (state, ownProps) => {
@@ -35,7 +35,10 @@ const mapDispatchToProps = (dispatch) => {
         },
         clearResponseMessage: () => {
             dispatch(clearResponseMessage());
-        }
+        },
+        getNeedyStatus: (payload) => {
+            dispatch(getNeedyStatus(payload));
+        },
     };
 };
 

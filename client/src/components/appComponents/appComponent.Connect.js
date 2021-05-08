@@ -1,8 +1,6 @@
 import {connect} from 'react-redux';
 import AppComponent from './appComponent';
-import {createProvider, fetchProviders, confirmRequest, fetchHelpingHands, raiseNeed, fetchNeeds, fetchDonars,
-    getUserStatus, clearResponseMessage, confirmNeedRequest} from '../../actions/sampleAction';
-import {withRouter} from 'react-router-dom';
+import {clearResponseMessage} from '../../actions/sampleAction';
 
 const mapStateToProps = (state, ownProps) => {
     const {sampleReducer = {}} = state;

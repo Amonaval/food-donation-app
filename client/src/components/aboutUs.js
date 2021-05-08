@@ -14,18 +14,29 @@ class AboutUs extends Component {
                       <br/>
                       <p>Having NGO as centralized system of donation is not scalable, reachable & feasible at every place.</p>
                       <br/>
-                      <p>Our idea you can relate with distributed system of food donation.</p>
+                      <p>Idea is to have decentralized food donation.</p>
                       <br/>
-                      <p><b>DONAR</b> - Individual wants to donate food on specific date of specific quantity.</p>
+                      <p><b>I want to donate</b> - 
+                            Individual wants to donate food on specific date of specific quantity. 
+                            Person can look for food needs around his/her area. Can confirm the request.
+                            He may also initiate donation request voluntarily</p>
                       <br/>
-                      <p><b>NEEDY </b>- Person is in need of food during specific date & time. They are not using app, they are just poor who are being noticed by HELPING HAND person/group.</p>
+                      <p><b>NEEDY </b>- Person is in need of food for specific date & time. 
+                      Person can raise food needs request or can confirm matching request around his/her area if any.</p>
+                     
+                      HELPING HAND can raise request as needy on behalf of poor who are being noticed by HELPING HAND person/group. 
+                      Poor might not be using the app so HELPING HAND would be the one who would be collecting the food from PROVIDER & 
+                      will provide the food to NEEDY.
+                      (E.g Some NGO group/person, voluteers etc)
+
+                     
                       <br/>
-                      <p><b>HELPING HAND</b> - would be the one who would be collecting the food from PROVIDER & will provide the food to NEEDY ( helping hand can be public servant like police, muncipalty person etc or some individual/group)</p>
+                      <p><b></b> </p>
                       <hr></hr>
-                      <p><b>BUSINESS VALUE</b> -- This idea itself can be considered as prototype implementation of business sceanrio. 
+                      {/* <p><b>BUSINESS VALUE</b> -- This idea itself can be considered as prototype implementation of business sceanrio. 
                         Many scenarios can use this underlying model.
                         <div>Food is the transactional entity which can be replaced with any other business entity</div>
-                      </p>
+                      </p> */}
                   </div>
               </div>
           </section>

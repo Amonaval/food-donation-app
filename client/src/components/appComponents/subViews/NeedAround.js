@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import {bindAll} from 'lodash';
 
 import AddressFormComponent from './AddressFormView';
+import {checkIfErrors} from '../../../utils';
 
 import NeedsTable from '../../tables/NeedsTable';
 import ContactVerifyView from './ContactVerification';
@@ -11,19 +12,27 @@ import ContactVerifyView from './ContactVerification';
 class NeedAroundView extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-        };
-        bindAll(this, ['setFormItem']);
+        this.state = {};
+        bindAll(this, ['setFormItem', 'confirmNeedRequest']);
     }
 
     setFormItem(val, item) {
         this.props.setFormItem(val, item);
     }
 
+    confirmNeedRequest() {
+        const {form} = this.props;
+        form.validateFields();
+        const errorInfo = form.getFieldsError();
+        if(checkIfErrors(errorInfo)) {
+            return;
+        }
+        this.props.confirmNeedRequest();
+    }
     render() {
 
-        const {auth, setFormItem, showScreen, reqAdded, reqRemoved, fetchNeeds} = this.props;
-        const {selectedCountry, selectedState, selectedCity, selectedArea, getFieldDecorator} = this.props;
+        const {auth, setFormItem, showScreen, reqAdded, reqRemoved, fetchNeeds, getFieldDecorator, location} = this.props;
+        const {selectedCountry, selectedState, selectedCity, selectedArea} = location;
 
         return(
 
@@ -47,9 +56,9 @@ class NeedAroundView extends React.Component {
                     <ContactVerifyView setFormItem={setFormItem} getFieldDecorator={getFieldDecorator} />
                 </Form>
                 {auth.user.username && <div>
-                    <Button className="ant-btn ant-btn-primary" onClick={fetchNeeds}>Check Needs</Button>
+                    <Button disabled={!(selectedCity || selectedArea)} className="ant-btn ant-btn-primary" onClick={fetchNeeds}>Check Needs</Button>
                     {selectedArea && <NeedsTable name={auth.user.username}/>}
-                    {(reqAdded.length > 0 || reqRemoved.length > 0) && <Button className="ant-btn ant-btn-primary confirm-helping-hand-btn" onClick={this.props.confirmNeedRequest}>Confirm Donation</Button>}
+                    {(reqAdded.length > 0 || reqRemoved.length > 0) && <Button disabled={!(selectedCity || selectedArea)} className="ant-btn ant-btn-primary confirm-helping-hand-btn" onClick={this.confirmNeedRequest}>Confirm Donation</Button>}
 
                 </div>}       
             </div>);

@@ -26,7 +26,6 @@ class App extends Component {
         user: '',
         darkTheme: true
     }
-
     setAuthStatus = authenticated => {
         this.setState({isAuthenticated: authenticated});
     }

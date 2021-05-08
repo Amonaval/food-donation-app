@@ -5,11 +5,7 @@ import {bindAll, kebabCase, isEmpty, isEqual} from 'lodash';
 import {connect} from 'react-redux';
 import {addRequest, removeRequest} from '../../actions/sampleAction';
 
-const timeSlots = {
-    LUNCH: '11am - 1pm',
-    SNACKS: '3pm - 6pm',
-    DINNER: '7pm - 9pm'
-};
+import {timeSlots} from '../../consts';
 
 class NeedsTable extends React.Component {
 
@@ -17,6 +13,14 @@ class NeedsTable extends React.Component {
         super(props);
     }
 
+    componentDidUpdate(prevProps) {
+        const {donarsResponse = {}} = this.props;
+        const {donarsResponse: prevResponseMessage = {}} = prevProps;
+        if(donarsResponse.message !== prevResponseMessage.message) {
+            this.setState({isModalVisible: true});
+        }
+    }
+    
     confirmProvider(record) {
         this.props.addRequest({key:  record.key, name: this.props.name, tableName: 'allNeeds'});
     }

@@ -1,23 +1,23 @@
 import React from 'react';
-import {Table, Modal, Button} from 'antd';
-import PropTypes from 'prop-types';
-import {bindAll, kebabCase, isEmpty, isEqual} from 'lodash';
-import {connect} from 'react-redux';
-import {addRequest, removeRequest} from '../../../actions/sampleAction';
+import { Button, InputNumber} from 'antd';
+import {bindAll} from 'lodash';
 
 
 import {checkIfErrors} from '../../../utils';
 import RaiseNeedView from '../subViews/RaiseNeedView';
 import HelpingHandView from '../subViews/HelpingHandView';
+import {timeSlots} from '../../../consts';
 
 
 class HelpingHandComponent extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            adress: {}
+        }
         bindAll(this, ['raiseNeed', 'fetchProviders', 'fetchDonars', 'createLocationPayload', 
-            'setFormItem', 'confirmProvideRequest']);
+            'setFormItem', 'confirmProvideRequest', 'getUsersRequest']);
     }
 
     componentDidMount() {
@@ -28,10 +28,19 @@ class HelpingHandComponent extends React.Component {
         this.setState({[item]: val});
     }
 
+    
+    getUsersRequest() {
+        const {searchMob} = this.state;
+        if(searchMob) {
+            this.props.getNeedyStatus({data: searchMob});
+        }
+    }
+
     raiseNeed() {
         const {commonProps} = this.props
         const {form} = commonProps;
         let {...rest} = this.state;
+        let {location} = rest;
 
         const errors = form.validateFields();
 
@@ -53,15 +62,15 @@ class HelpingHandComponent extends React.Component {
             purpose: rest.purpose,
             serveAs: rest.serveAs,
             helpingHandName: auth.user.username,
-            areaName: rest.selectedArea,
-            city: rest.selectedCity,
-            state: rest.selectedState,
-            country: rest.selectedCountry,
+            areaName: location.selectedArea,
+            city: location.selectedCity,
+            state: location.selectedState,
+            country: location.selectedCountry,
             mobileNo: rest.mobileNo
         };
 
         if(auth.user.pool) {
-            localStorage.setItem(`${auth.user.pool.clientId}`, `${rest.selectedCountry}_${rest.selectedState}_${rest.selectedCity}_${rest.selectedArea}`);
+            localStorage.setItem(`${auth.user.pool.clientId}`, `${location.selectedCountry}_${location.selectedState}_${location.selectedCity}_${location.selectedArea}`);
         }
         this.props.raiseNeed(data);
     }
@@ -69,23 +78,36 @@ class HelpingHandComponent extends React.Component {
     createLocationPayload(){
         const {commonProps} = this.props
         const {form} = commonProps;
-        const {selectedCountry, selectedState, selectedCity, selectedArea, mobileNo} = this.state;
+        const {location, mobileNo} = this.state;
+        const {selectedCountry, selectedState, selectedCity, selectedArea} = location;
 
         // if(!mockOTP[mobileNo] || mockOTP[mobileNo] != this.state.otp) {
         //     form.setFields({['otp']: {value: this.state.otp, errors: [new Error('Invalid OTP')]}});
         //     form.validateFields('otp');
         //     return;
         // }
-        if(!(selectedCountry && selectedState && selectedCity && selectedArea)) {
+
+        form.validateFields();
+        const errorInfo = form.getFieldsError();
+        if(checkIfErrors(errorInfo)) {
+            return;
+        }
+
+        if(!(selectedCountry && selectedState && (selectedCity || selectedArea))) {
             form.validateFields(['country', 'state', 'city', 'area']);
             return;
         }
-        const rest = {
+        let rest = {
             country: selectedCountry,
             state: selectedState,
-            city: selectedCity,
-            areaName: selectedArea
+            city: selectedCity
         };
+        if(selectedArea) {
+            rest = {
+                ...rest,
+                areaName: selectedArea
+            };
+        }
         return rest;
     }
 
@@ -96,17 +118,46 @@ class HelpingHandComponent extends React.Component {
 
     fetchProviders() {
         const payload = this.createLocationPayload();
-        this.props.fetchProviders(payload);
+        if(payload) {
+            this.props.fetchProviders(payload);
+        }
     }
 
     confirmProvideRequest() {
-        const {auth} = this.props;
+        const {commonProps = {}} = this.props;
+        const {auth} = commonProps;
         this.props.confirmRequest({name: auth.user.username, contactNo: this.state.mobileNo});
     }
 
+    componentDidUpdate() {
+        const {commonProps = {}} = this.props;
+        const {location} = this.state;
+        if(!location && commonProps.selectedCountry) {
+            this.setState({
+                location: {
+                    selectedCountry: commonProps.selectedCountry,
+                    selectedState: commonProps.selectedState,
+                    selectedCity: commonProps.selectedCity,
+                    selectedArea: commonProps.selectedArea
+                }
+            });
+        }
+    }
+
+
     render() {
-        let {commonProps, createButtonClass, changeScreen} = this.props;
+        let {commonProps, createButtonClass, changeScreen, userRequests} = this.props;
         const {showScreen} = commonProps;
+
+        let confirmedRequest = [];
+        let unconfirmedRequest = [];
+        userRequests.forEach((item) => {
+            if(item.confirmedBy !== null) {
+                confirmedRequest.push(item);
+            } else {
+                unconfirmedRequest.push(item);
+            }
+        });
        
         return (
             <div>
@@ -129,7 +180,29 @@ class HelpingHandComponent extends React.Component {
                     fetchDonars={this.fetchDonars}
                     setFormItem={this.setFormItem} />}
 
-                {showScreen === 'searchStatusHH' && <div className="search-status"> Track status for Helping hand. Work under progress </div>}
+                {/* {showScreen === 'searchStatusHH' && <div className="search-status"> Track status for Helping hand/Needy. Work under progress </div>} */}
+
+                {showScreen === 'searchStatusHH' && <div className="search-status">
+                    <Button className="ant-btn ant-btn-primary" onClick={this.getUsersRequest}>Get Status</Button>
+                    <InputNumber placeholder="Enter your mobile no" value={this.state.searchMob} onChange={(val) => this.setFormItem(val, 'searchMob')} />
+
+                    <div>
+                        {unconfirmedRequest && unconfirmedRequest.length > 0 && <span><b>UnConfirmed Request</b></span>}
+                        {unconfirmedRequest && unconfirmedRequest.map((item, index) => <div className="unconfirmed-list" key={item.date}>
+                            {<span>{index + 1}. <b>{item.purpose}</b></span>}
+                        </div>)}
+                        {confirmedRequest && confirmedRequest.length > 0 && <span><b>Confirmed Request</b></span>}
+                        {confirmedRequest && confirmedRequest.map((item, index) => <div className="confirmed-list" key={item.date}>
+                            {<span>{index + 1}. <b>{item.confirmedBy}</b> will donate <span><b>{item.purpose}</b></span>
+                            <span> between </span><span>{timeSlots[item.serveAs]}</span><span>contact No: {item.mobileNo}</span>
+                            </span>}
+                        </div>)}
+                        {confirmedRequest && confirmedRequest.length > 0 && <b>Please be available to pickup</b>}
+                        <br />
+                        {(userRequests && userRequests.length > 0) && <div> Keep doing good work </div>}
+                    </div>
+                </div>}
+           
             </div>);
     }
 }

@@ -4,7 +4,7 @@ import {camelCase, isEmpty} from 'lodash';
 import * as actionTypes from '../actions/actionTypes';
 import {createProviderSuccessful, fetchProvidersSuccessful, confirmRequestSuccessful, fetchNeedsSuccessful,
     fetchDonarsSuccessful, confirmNeedRequestSuccessful, 
-    getUserStatusSuccessful, getHelpingHandsSuccessful, raiseNeedSuccessful} from '../actions/sampleAction';
+    getUserStatusSuccessful, getNeedyStatusSuccessful, getHelpingHandsSuccessful, raiseNeedSuccessful} from '../actions/sampleAction';
 import {combineEpics} from 'redux-observable';
 
 const API_NAME = 'foodAppApi';
@@ -64,6 +64,19 @@ const fetchUsersStatusEpic = (action$, state$, {apis}) => {
                 return apis[API_NAME].fetchUsersStatusApi$(payload);
             }),
             map((result) => getUserStatusSuccessful(result))
+        );
+};
+
+const fetchNeedyStatusEpic = (action$, state$, {apis}) => {
+    const action = actionTypes.GET_NEEDY_REQUEST_STATUS;
+    return action$
+        .ofType(action)
+        .pipe(
+            switchMap((metaData) => {
+                const {payload} = metaData;
+                return apis[API_NAME].fetchNeedyStatusApi$(payload);
+            }),
+            map((result) => getNeedyStatusSuccessful(result))
         );
 };
 
@@ -160,6 +173,7 @@ const foodAppEpic = () => {
         createProvideRequestEpic,
         fetchProviderRequestEpic,
         fetchUsersStatusEpic,
+        fetchNeedyStatusEpic,
         fetchHelpingHandsEpic,
         confirmRequestEpic,
         createNeedRequestEpic,

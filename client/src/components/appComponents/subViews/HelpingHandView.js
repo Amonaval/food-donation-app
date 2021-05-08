@@ -10,8 +10,7 @@ import ContactVerifyView from './ContactVerification';
 class HelpingHandView extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-        };
+        this.state = {};
         bindAll(this, ['setFormItem']);
     }
 
@@ -21,8 +20,8 @@ class HelpingHandView extends React.Component {
 
     render() {
 
-        const {auth, setFormItem, showScreen, reqAdded, reqRemoved, fetchProviders, confirmProvideRequest} = this.props;
-        const {selectedCountry, selectedState, selectedCity, selectedArea, getFieldDecorator} = this.props;
+        const {auth, setFormItem, showScreen, reqAdded, reqRemoved, fetchProviders, confirmProvideRequest, getFieldDecorator, location} = this.props;
+        const {selectedCountry, selectedState, selectedCity, selectedArea } = location;
 
         return(
 
@@ -46,10 +45,10 @@ class HelpingHandView extends React.Component {
                     <ContactVerifyView setFormItem={setFormItem} getFieldDecorator={getFieldDecorator} />
                 </Form>
                 {auth.user.username && <div>
-                    <Button className="ant-btn ant-btn-primary" onClick={fetchProviders}>Get Donars Request</Button>
+                    <Button disabled={!(selectedCity || selectedArea)} className="ant-btn ant-btn-primary" onClick={fetchProviders}>See donations around</Button>
                     {selectedArea && <RequestTable name={auth.user.username}/>}
-                    {(reqAdded.length > 0 || reqRemoved.length > 0) && <Button className="ant-btn ant-btn-primary confirm-helping-hand-btn" onClick={confirmProvideRequest}>Confirm Changes</Button>}
-                </div>} 
+                    {(reqAdded.length > 0 || reqRemoved.length > 0) && <Button disabled={!(selectedCity || selectedArea)} className="ant-btn ant-btn-primary confirm-helping-hand-btn" onClick={confirmProvideRequest}>Confirm Changes</Button>}
+                </div>}
             </div>);
     }
 }

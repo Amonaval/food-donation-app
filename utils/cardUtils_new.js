@@ -157,7 +157,7 @@ module.exports = function () {
     async function fetchNeeds() {
          // To fetch country then get state thn city -- as state, city can be duplicate
          let raisedNeedInArea = await Areas.findOne({_id: areaObj._id}).populate('raisedNeeds').exec();
-        if(raisedNeedInArea) {
+        if(raisedNeedInArea && raisedNeedInArea.raisedNeeds.length > 0) {
             return raisedNeedInArea.raisedNeeds;
         } else {
             return {message: 'No Needs around this area', area: null}
@@ -168,7 +168,7 @@ module.exports = function () {
          // To fetch country then get state thn city -- as state, city can be duplicate
          let providersInArea = await Areas.findOne({_id: areaObj._id}).populate('providers').exec();
          // let providersInArea = await Areas.findOne({name: areaName}).populate('providers').exec();
-        if(providersInArea) {
+        if(providersInArea && providersInArea.providers.length > 0) {
             return providersInArea.providers;
         } else {
             return {message: 'No Provider found at this place', area: null}
@@ -184,7 +184,7 @@ module.exports = function () {
        if(helpingHandInArea && helpingHandInArea.helpingHandRegistered.length > 0) {
            return helpingHandInArea.helpingHandRegistered;
        } else {
-           return {message: 'No Helping found at this place', area: null}
+           return {message: 'No helping hand around this area for support', area: null}
        }
    }
 
@@ -260,10 +260,15 @@ module.exports = function () {
      
 
     async function fetchUserStatus({data}) {
-        console.log(data)
         userData = await ProviderSchema.find({mobileNo: data});
         return userData;
     }
+
+    async function fetchNeedyStatus({data}) {
+        userData = await NeedRequestSchema.find({mobileNo: data});
+        return userData;
+    }
+
     return {
             createProvideRequest: createProvideRequest,
             getDataByArea: getDataByArea,
@@ -271,9 +276,9 @@ module.exports = function () {
             confirmProvideRequest: confirmProvideRequest,
             confirmNeedRequest: confirmNeedRequest,
             fetchUserStatus: fetchUserStatus,
+            fetchNeedyStatus: fetchNeedyStatus,
             registerHelpingHand: registerHelpingHand,
             fetchReisteredHelpingHand: fetchReisteredHelpingHand,
-
             registerDonar, 
             createNeedRequest, 
             fetchNeeds, 

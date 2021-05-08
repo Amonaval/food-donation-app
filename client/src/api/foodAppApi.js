@@ -38,6 +38,11 @@ const fetchUsersStatusApi$ = (queryParam) => {
     return http.get(`${baseURL}/fetchUserStatus`, queryParam).pipe(simpleMapPipe);
 };
 
+const fetchNeedyStatusApi$ = (queryParam) => {
+    queryParam = getQueryParams(queryParam);
+    return http.get(`${baseURL}/fetchNeedyStatus`, queryParam).pipe(simpleMapPipe);
+};
+
 const fetchHelpingHandsApi$ = (queryParam) => {
     queryParam = getQueryParams(queryParam);
     return http.get(`${baseURL}/fetchHelpingHand`, queryParam).pipe(simpleMapPipe);
@@ -60,7 +65,7 @@ export {
     createProviderRequestApi$,
     fetchProviderRequestApi$,
     fetchHelpingHandsApi$,
-  
+    fetchNeedyStatusApi$,
     fetchUsersStatusApi$,
     confirmRequestApi$,
 

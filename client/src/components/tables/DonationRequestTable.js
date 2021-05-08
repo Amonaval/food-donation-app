@@ -5,11 +5,8 @@ import {bindAll, kebabCase, isEmpty, isEqual} from 'lodash';
 import {connect} from 'react-redux';
 import {addRequest, removeRequest} from '../../actions/sampleAction';
 
-const timeSlots = {
-    LUNCH: '11am - 1pm',
-    SNACKS: '3pm - 6pm',
-    DINNER: '7pm - 9pm'
-};
+import {timeSlots} from '../../consts';
+
 
 class RequestTable extends React.Component {
 

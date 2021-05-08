@@ -8,14 +8,11 @@ import moment from 'moment';
 import AddressFormComponent from './AddressFormView';
 import HelpingHandsTable from '../../tables/HelpingHandsTable';
 import ContactVerifyView from './ContactVerification';
+import {timeSlots} from '../../../consts';
+
 
 const Option = Select.Option;
 
-const timeSlots = {
-    LUNCH: '11am - 1pm',
-    SNACKS: '3pm - 6pm',
-    DINNER: '7pm - 9pm'
-};
 
 
 class DonarView extends React.Component {
@@ -31,11 +28,17 @@ class DonarView extends React.Component {
         this.props.setFormItem(val, item);
     }
 
+    componentDidUpdate(prevProps) {
+        if(prevProps.selectedArea !== this.props.selectedArea) {
+            // this.props.fetchHelpingHands();
+        }
+    }
+
 
     render() {
 
-        const {createProvider, setFormItem, fetchHelpingHands, auth, getFieldDecorator, showScreen} = this.props;
-        const {selectedCountry, selectedState, selectedCity, selectedArea} = this.props;
+        const {createProvider, setFormItem, fetchHelpingHands, auth, getFieldDecorator, showScreen, location} = this.props;
+        const {selectedCountry, selectedState, selectedCity, selectedArea} = location;
 
         return(
             <React.Fragment>
@@ -55,7 +58,6 @@ class DonarView extends React.Component {
                         getFieldDecorator={getFieldDecorator}
                         showScreen={showScreen}
                     />
-                    <Button className="ant-btn ant-btn-primary" onClick={fetchHelpingHands}>Know Helping Hand</Button>
                     <ContactVerifyView setFormItem={setFormItem} getFieldDecorator={getFieldDecorator} />
 
 
@@ -71,7 +73,7 @@ class DonarView extends React.Component {
                     </Form.Item>
                     <Form.Item label="Feed how many people">
                         {getFieldDecorator('serves', {rules: [{required: true, message: 'Approx people it can serve'}]})(
-                            <InputNumber value={this.props.serves} onChange={(val) => this.setFormItem(val, 'serves')} />
+                            <InputNumber value={this.props.serves} min="0" onChange={(val) => this.setFormItem(val, 'serves')} />
                         )}
                     </Form.Item>
 
@@ -93,10 +95,10 @@ class DonarView extends React.Component {
                             </Select>
                         )}
                     </Form.Item>
-                    <Button className="ant-btn ant-btn-primary" onClick={createProvider}>Confirm</Button>
+                    <Button disabled={!(selectedCity || selectedArea)} className="ant-btn ant-btn-primary" onClick={createProvider}>Confirm</Button>
                 </Form>
                 <div>
-                    <HelpingHandsTable name={auth.user.username}/>
+                    <HelpingHandsTable selectedArea={selectedArea} name={auth.user.username}/>
                 </div>
             </React.Fragment>
         );

@@ -8,7 +8,19 @@ class HelpingHandsTable extends React.Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            isModalVisible: false
+        }
     }
+
+    componentDidUpdate(prevProps) {
+        const {helpingHandResponse = {}} = this.props;
+        const {helpingHandResponse: prevResponseMessage = {}} = prevProps;
+        if(helpingHandResponse.message !== prevResponseMessage.message) {
+            this.setState({isModalVisible: true});
+        }
+    }
+
     render() {
 
         let {areawiseHelpingHands = [], helpingHandResponse, loading} = this.props;
@@ -45,17 +57,21 @@ class HelpingHandsTable extends React.Component {
             }
         ];
 
-        return(<div className="helping-hand-table">
-            {loading && <Spin />}
-            {!loading && helpingHandResponse && <h3>{helpingHandResponse.message}</h3>}
-            {!isEmpty(areawiseHelpingHands) && <Table
-                bordered
-                dataSource={areawiseHelpingHands}
-                columns={defaultcolumns}
-                pagination={areawiseHelpingHands.length > 10}/>}
+        return(
+            <Spin spinning={loading}>
+                <div className="helping-hand-table">
+                    {!loading && helpingHandResponse &&
+                    <Modal title="Request Confirm" visible={this.state.isModalVisible} onOk={() => this.setState({isModalVisible: false})}>
+                        <p>{helpingHandResponse.message}</p>
+                    </Modal>}
+                    {!isEmpty(areawiseHelpingHands) && <Table
+                        bordered
+                        dataSource={areawiseHelpingHands}
+                        columns={defaultcolumns}
+                        pagination={areawiseHelpingHands.length > 10}/>}
 
-        </div>);
-
+                </div>
+            </Spin>);
     }
 }
 
@@ -69,7 +85,8 @@ const mapStateToProps = (state, ownProps) => {
         areawiseHelpingHands,
         loading,
         helpingHandResponse,
-        name: ownProps.name
+        name: ownProps.name,
+        selectedArea: ownProps.selectedArea
     };
 };
 
