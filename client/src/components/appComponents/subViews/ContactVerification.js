@@ -1,7 +1,7 @@
 import React from 'react';
 import {Form, Input, InputNumber} from 'antd';
 import PropTypes from 'prop-types';
-import {bindAll} from 'lodash';
+import {bindAll, isEmpty} from 'lodash';
 
 class ContactVerifyView extends React.Component {
     constructor(props) {
@@ -14,7 +14,9 @@ class ContactVerifyView extends React.Component {
     }
 
     mobileNoValidator(rule, value, callback) {
-        if(value.match(/^([+]\d{2}[ ])?\d{10}$/g) != null){
+        if(isEmpty(value)) {
+            callback('Contact no is required');
+        } else if(value.match(/^([+]\d{2}[ ])?\d{10}$/g) != null){
             callback();
         } else {
             callback('Invalid contact no');
@@ -28,7 +30,6 @@ class ContactVerifyView extends React.Component {
             <React.Fragment>
                 <Form.Item label="Contact No">
                     {getFieldDecorator('mobileNo', {rules: [
-                        {required: true, message: 'Contact no is required'},
                         {validator: (rule, index, callback) => {
                             if(this.mobileNoValidator) {
                                 this.mobileNoValidator(rule, index, callback, this.props, this.form);

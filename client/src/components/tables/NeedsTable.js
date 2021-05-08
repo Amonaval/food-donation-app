@@ -91,9 +91,10 @@ class NeedsTable extends React.Component {
                 width: '100px',
                 render: (text, record) => (
                     <div>
+                        {record.confirmedBy === null && record.helpingHandName == this.props.name && record.mobileNo == this.props.mobileNo && <span>Your Request</span>}
                         {record.confirmedBy === null && <Button onClick={() => this.confirmProvider(record)} >Donate</Button>}
-                        {record.confirmedBy !== null && record.confirmedBy !== this.props.name && <span>{record.confirmedBy} will donate</span>}
-                        {record.confirmedBy !== null && record.confirmedBy == this.props.name && <Button onClick={() => this.cancelProvider(record)} >Cancel Donation</Button>}
+                        {record.confirmedBy !== null && (record.confirmedBy !== this.props.name || record.mobileNo !== this.props.mobileNo) && <span>{record.confirmedBy} will donate</span>}
+                        {record.confirmedBy !== null && record.confirmedBy == this.props.name && record.mobileNo == this.props.mobileNo && <Button onClick={() => this.cancelProvider(record)} >Cancel Donation</Button>}
                     </div>
                 )
             }

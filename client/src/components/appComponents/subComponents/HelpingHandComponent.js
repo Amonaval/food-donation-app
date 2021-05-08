@@ -200,6 +200,7 @@ class HelpingHandComponent extends React.Component {
                         {confirmedRequest && confirmedRequest.length > 0 && <b>Please be available to pickup</b>}
                         <br />
                         {(userRequests && userRequests.length > 0) && <div> Keep doing good work </div>}
+                        {(userRequests && userRequests.length === 0) && <div> No request found</div>}
                     </div>
                 </div>}
            

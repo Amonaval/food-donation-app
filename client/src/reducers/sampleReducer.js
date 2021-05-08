@@ -7,6 +7,54 @@ import {CREATE_DONATION_REQUEST, FETCH_DONATION_REQUEST, API_SUFFIX, GET_DONARS_
 
 const {SUCCESS} = API_SUFFIX;
 
+
+function resetCacheData() {
+    return {
+        allProviders: [],
+        allNeeds: [],
+        userRequests: [],
+        responseMessage: {},
+        areawiseHelpingHands: [],
+        areawiseDonars: [],
+        helpingHandResponse: {},
+        donarsResponse: {}
+    };
+}
+
+function createFinalData(payload) {
+    let allData = [];
+    let responseMessage = {};
+    // let helpingHands = [];
+    if(payload.message) {
+        responseMessage = payload;
+    } else if(Array.isArray(payload)) {
+        allData = payload;
+    } else {
+        const allAreas = Object.keys(payload);
+        if(allAreas.length > 1) {
+            allAreas.forEach((item) => {
+                payload[item].forEach((subItem) => {
+                    allData.push({
+                        ...subItem,
+                        areaName: item
+                    });
+                });
+            });
+        } else {
+            allData = Object.values(payload) && Object.values(payload)[0] || [];
+        }
+    }
+    return {
+        allData: allData.map((data, index) => {
+            return {
+                key: data.key || index,
+                ...data
+            };
+        }),
+        responseMessage
+    };
+}
+
 export default function sampleReducer(initialState = {}) {
     return (state = initialState, action) => {
 
@@ -23,23 +71,19 @@ export default function sampleReducer(initialState = {}) {
             case CONFIRM_NEED_REQUEST:
             case RAISE_NEED_REQUEST:
             case FETCH_NEEDS:
-            case FETCH_DONARS:
+            case FETCH_DONARS: {
+                let resetData = resetCacheData();
                 return {
                     ...state,
                     loading:true,
-                    userRequests: [],
-                    responseMessage: {}
+                    ...resetData
                 };
+            }
             case CLEAR_RESPONSE_MESSAGE: {
+                const resetData = resetCacheData();
                 return {
                     ...state,
-                    responseMessage: {},
-                    areawiseHelpingHands: [],
-                    areawiseDonars: [],
-                    helpingHandResponse: {},
-                    donarsResponse: {},
-                    reqAdded: [],
-                    reqRemoved: []
+                    ...resetData
                 };
             }
             case `${GET_NEEDY_REQUEST_STATUS}${SUCCESS}`: {
@@ -180,37 +224,3 @@ export default function sampleReducer(initialState = {}) {
     };
 }
 
-
-function createFinalData(payload) {
-    let allData = [];
-    let responseMessage = {};
-    // let helpingHands = [];
-    if(payload.message) {
-        responseMessage = payload;
-    } else if(Array.isArray(payload)) {
-        allData = payload;
-    } else {
-        const allAreas = Object.keys(payload);
-        if(allAreas.length > 1) {
-            allAreas.forEach((item) => {
-                payload[item].forEach((subItem) => {
-                    allData.push({
-                        ...subItem,
-                        areaName: item
-                    });
-                });
-            });
-        } else {
-            allData = Object.values(payload)[0];
-        }
-    }
-    return {
-        allData: allData.map((data, index) => {
-            return {
-                key: data.key || index,
-                ...data
-            };
-        }),
-        responseMessage
-    };
-}

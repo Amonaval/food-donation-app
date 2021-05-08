@@ -18,7 +18,7 @@ module.exports = function () {
     var {timeSlots} = require('../config/appConfig');
     
     async function createLocationEntry(level, payload) {
-        const {areaName, city, state, country, provider, type, instanceData} = payload;
+        const {areaName, city, state, country, type, instanceData} = payload;
     
         let objectType = {}
         switch(type) {
@@ -107,6 +107,36 @@ module.exports = function () {
         }    
     }
 
+    async function saveLocationDataCityLevel(instanceData, payload, type) {
+        let {city = '', state = '', country = '', ...rest} = payload;
+        let countryData = null, stateData = null, cityData = null;
+        if(city && state && country) {        
+            countryData = await Country.findOne({name: country}); 
+            if(countryData) {
+                stateData = await State.findOne({name: state}); 
+                if(stateData) {
+                    cityData = await City.findOne({name: city}); 
+                    if(cityData) {
+                        pushData(type, cityData, instanceData)
+                    } else {
+                        cityData = await createLocationEntry('city', {instanceData, city, type}); 
+                        stateData.cities.push(cityData);
+                    }
+                    await cityData.save()
+                } else {
+                    stateData = await createLocationEntry('state', {instanceData, city, state, type});
+                    countryData.states.push(stateData);
+                }
+                await stateData.save()
+            } else {
+                countryData = await createLocationEntry('country', {instanceData, city, state, country, type});
+            }
+            await countryData.save()
+        } else {
+            return 'Incomplete Data';
+        }    
+    }
+
     async function createProvideRequest(payload = {}) {
         let {areaName = '', city = '', state = '', country = '', ...rest} = payload;
         rest = {
@@ -115,7 +145,27 @@ module.exports = function () {
         }
         const provider = new ProviderSchema(rest);
         await provider.save()
-        await saveLocationData(provider, payload, 'provider')
+        if(!payload.areaName) {
+            await saveLocationDataCityLevel(provider, payload, 'provider')
+        } else {
+            await saveLocationData(provider, payload, 'provider')
+        }
+    }
+
+    async function createNeedRequest(payload = {}) {
+        let {areaName = '', city = '', state = '', country = '', ...rest} = payload;
+        rest = {
+            ...rest,
+            confirmedBy: null
+        }
+        const donarRegister = new NeedRequestSchema(rest);
+        await donarRegister.save()
+        
+        if(!payload.areaName) {
+            await saveLocationDataCityLevel(donarRegister, payload, 'raisedNeed')
+        } else {
+            await saveLocationData(donarRegister, payload, 'raisedNeed'); 
+        }
     }
 
 
@@ -134,16 +184,7 @@ module.exports = function () {
         await saveLocationData(donarRegister, payload, 'donars'); 
     }
 
-    async function createNeedRequest(payload = {}) {
-            let {areaName = '', city = '', state = '', country = '', ...rest} = payload;
-            rest = {
-                ...rest,
-                confirmedBy: null
-            }
-            const donarRegister = new NeedRequestSchema(rest);
-            await donarRegister.save()
-            await saveLocationData(donarRegister, payload, 'raisedNeed'); 
-    }
+ 
 
     async function fetchReisteredDonars(areaObj) {
          // To fetch country then get state thn city -- as state, city can be duplicate
@@ -154,9 +195,17 @@ module.exports = function () {
             return {code: 200, status: 'fail', message: 'No Donars found at this place', area: null}
         }
     }
-    async function fetchNeeds(areaObj) {
+    async function fetchNeeds(areaObj, lookupOnlyCities) {
          // To fetch country then get state thn city -- as state, city can be duplicate
-         let raisedNeedInArea = await Areas.findOne({_id: areaObj._id}).populate('raisedNeeds').exec();
+        let raisedNeedInArea = await Areas.findOne({_id: areaObj._id}).populate('raisedNeeds').exec();
+        if(lookupOnlyCities) {
+            const cityLevelData = await City.findOne({_id: areaObj._id}).populate('raisedNeeds').exec();
+            if(cityLevelData && cityLevelData.raisedNeeds.length > 0) {
+                return {[areaObj.name]: cityLevelData.raisedNeeds};
+            } else {
+                return null
+            }
+        }
         if(raisedNeedInArea && raisedNeedInArea.raisedNeeds.length > 0) {
             return {[areaObj.name]: raisedNeedInArea.raisedNeeds}
         } else {
@@ -164,12 +213,22 @@ module.exports = function () {
         }
     }
 
-    async function fetchUsersData(areaObj) {
+    async function fetchUsersData(areaObj, lookupOnlyCities) {
          // To fetch country then get state thn city -- as state, city can be duplicate
-         let providersInArea = await Areas.findOne({_id: areaObj._id}).populate('providers').exec();
+        let providersInArea = await Areas.findOne({_id: areaObj._id}).populate('providers').exec();
+        let {providers = []} = providersInArea || {};
+        if(lookupOnlyCities) {
+            const cityLevelData = await City.findOne({_id: areaObj._id}).populate('providers').exec();
+            console.log('cityLevelData', areaObj.name, cityLevelData)
+            if(cityLevelData && cityLevelData.providers.length > 0) {
+                return {[areaObj.name]: cityLevelData.providers};
+            } else {
+                return null
+            }
+        }
          // let providersInArea = await Areas.findOne({name: areaName}).populate('providers').exec();
-        if(providersInArea && providersInArea.providers.length > 0) {
-            return {[areaObj.name]: providersInArea.providers};
+        if(providers.length > 0) {
+            return {[areaObj.name]: providers};
         } else {
             return {code: 200, status: 'fail', message: 'No Provider found at this place', area: null}
         }
@@ -181,7 +240,7 @@ module.exports = function () {
         // let providersInArea = await Areas.findOne({name: areaName}).populate('providers').exec();
         // gameData = gameData.populate('areas').exec();
        if(helpingHandInArea && helpingHandInArea.helpingHandRegistered.length > 0) {
-           return {[areaObj.name]: helpingHandInArea.helpingHandRegistered};;
+           return {[areaObj.name]: helpingHandInArea.helpingHandRegistered};
        } else {
            return {code: 200, status: 'fail', message: 'No helping hand around this area for support', area: null}
        }
@@ -201,7 +260,7 @@ module.exports = function () {
                 if(areaName) {
                     areaObj = provideCity.areas.find((item) => item.name === areaName);
                 } else {
-                    areaObj = provideCity.areas;
+                    areaObj = provideCity;
                 }
                 return areaObj;
             }

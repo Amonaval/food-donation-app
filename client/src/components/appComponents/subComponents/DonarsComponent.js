@@ -93,12 +93,17 @@ class DonarComponent extends React.Component {
             form.validateFields(['country', 'state', 'city', 'area']);
             return;
         }
-        const rest = {
+        let rest = {
             country: selectedCountry,
             state: selectedState,
-            city: selectedCity,
-            areaName: selectedArea
+            city: selectedCity
         };
+        if(selectedArea) {
+            rest = {
+                ...rest,
+                areaName: selectedArea
+            };
+        }
         return rest;
     }
 
@@ -188,6 +193,7 @@ class DonarComponent extends React.Component {
                         </div>)}
                         <br />
                         {(userRequests && userRequests.length > 0) && <div>Thank you for you contribution. You are doing a noble work.</div>}
+                        {(userRequests && userRequests.length === 0) && <div> No request found</div>}
                     </div>
                 </div>}
             </div>

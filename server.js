@@ -69,25 +69,29 @@ app.post('/api/registerDonar', async function(req, res) {
 async function getDataByAreas({req, onSuccess}) {
    const areaData = await getDataByArea(req.query); 
    let isInValid = !areaData || areaData.status == 'fail';
+   console.log('areaData', )
    // if(!req.query.areaName) {
    //    isInValid = !areaData || areaData.length === 0;
    // }
    const onlyCities = !req.query.areaName;
-   console.log(areaData)
    if(isInValid) {
       return areaData;
    } else {
       let allProviders = [];
       if(onlyCities) {
          const allUsers = [];
-         areaData.forEach((item) => {
+         // Select all areas of the city to find request
+         areaData.areas && areaData.areas.forEach((item) => {
             allUsers.push(onSuccess(item));
          })
+         // Some request are created on cities directly & not choosed specific area.
+         const cityLevelData = onSuccess(areaData, true); 
+         if(cityLevelData) {
+            allUsers.push(cityLevelData);
+         }
          allProviders = await Promise.all(allUsers);
-         console.log('1',allProviders)
       } else {
          allProviders = [await onSuccess(areaData)];
-         console.log('2',allProviders)
       }
       if(allProviders.message) {
          return allProviders;
@@ -99,7 +103,6 @@ async function getDataByAreas({req, onSuccess}) {
             data[key] = item[key];
          }
       });
-      console.log('3', data)
       return data;
    }
 }

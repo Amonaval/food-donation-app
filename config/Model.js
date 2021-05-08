@@ -74,6 +74,10 @@ var mongoose = require('mongoose'),
 
     var citySchema = mongoose.Schema({
         name: { type: String },
+        providers: [ { type: ObjectId, ref: ProviderSchema } ],
+        helpingHandRegistered: [ { type: ObjectId, ref: HelpingHandRegisterSchema } ],
+        registeredDonars: [{ type: ObjectId, ref: DonarRegisterSchema }],
+        raisedNeeds: [{ type: ObjectId, ref: NeedRequestSchema }],
         areas: [{ type: ObjectId, ref: Areas }]
     });
     var City = mongoose.model('City', citySchema)

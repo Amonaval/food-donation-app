@@ -86,9 +86,10 @@ class RequestTable extends React.Component {
                 width: '100px',
                 render: (text, record) => (
                     <div>
+                        {record.confirmedBy === null && record.providerName === this.props.name && record.mobileNo === this.props.mobileNo && <span>Your Request</span>}
                         {record.confirmedBy === null && <Button onClick={() => this.confirmProvider(record)} >Pickup</Button>}
-                        {record.confirmedBy !== null && record.confirmedBy !== this.props.name && <span>{record.confirmedBy} will pickup</span>}
-                        {record.confirmedBy !== null && record.confirmedBy == this.props.name && <Button onClick={() => this.cancelProvider(record)} >Cancel pickup</Button>}
+                        {record.confirmedBy !== null && (record.confirmedBy !== this.props.name || record.mobileNo !== this.props.mobileNo) && <span>{record.confirmedBy} will pickup</span>}
+                        {record.confirmedBy !== null && record.confirmedBy == this.props.name && record.mobileNo === this.props.mobileNo && <Button onClick={() => this.cancelProvider(record)} >Cancel pickup</Button>}
                     </div>
                 )
             }

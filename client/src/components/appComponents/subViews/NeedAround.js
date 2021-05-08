@@ -31,7 +31,7 @@ class NeedAroundView extends React.Component {
     }
     render() {
 
-        const {auth, setFormItem, showScreen, reqAdded, reqRemoved, fetchNeeds, getFieldDecorator, location} = this.props;
+        const {auth, setFormItem, showScreen, reqAdded, reqRemoved, fetchNeeds, getFieldDecorator, location, mobileNo} = this.props;
         const {selectedCountry, selectedState, selectedCity, selectedArea} = location;
 
         return(
@@ -57,7 +57,7 @@ class NeedAroundView extends React.Component {
                 </Form>
                 {auth.user.username && <div>
                     <Button disabled={!(selectedCity || selectedArea)} className="ant-btn ant-btn-primary" onClick={fetchNeeds}>Check Needs</Button>
-                    {(selectedCity || selectedArea) && <NeedsTable name={auth.user.username}/>}
+                    {(selectedCity || selectedArea) && <NeedsTable mobileNo={mobileNo} name={auth.user.username}/>}
                     {(reqAdded.length > 0 || reqRemoved.length > 0) && <Button disabled={!(selectedCity || selectedArea)} className="ant-btn ant-btn-primary confirm-helping-hand-btn" onClick={this.confirmNeedRequest}>Confirm Donation</Button>}
 
                 </div>}       
