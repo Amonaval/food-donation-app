@@ -1,5 +1,5 @@
 import React from 'react';
-import {Form, Button, InputNumber, Spin, Modal, Icon, Popover, Tooltip } from 'antd';
+import {Form, Button, InputNumber, Spin, Modal, Card, Popover, Tooltip} from 'antd';
 import {NavLink} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {bindAll, isEmpty} from 'lodash';
@@ -159,32 +159,58 @@ class AppComponent extends React.Component {
                 <div className="container">
                     {!this.props.flow && <p className="control landing-page-btns">
                         <div className="donate-btn">
-                            <NavLink to="/app/donar">
+
+
+                            <Card size="small" title={<NavLink to="/app/donar">I want to Donate</NavLink>}>
+                                <p><b>Donate</b> the food by initiating the request voluntarily & the person in need can confirm.</p>
+                                <p><b>Search Needs</b> & donate food for the needs raised around your area/city.</p>
+                            </Card>
+
+
+
+                            {/* <NavLink to="/app/donar">
                                 <Button type="button" className="ant-btn ant-btn ant-btn-link custom-links" >I want to donate</Button>
-                            </NavLink>
-                            <Popover content={aboutDonate} title="Donate food">
+                            </NavLink> */}
+                            {/* <Popover content={aboutDonate} title="Donate food">
                                 <Icon type="info-circle" />
-                            </Popover>
-                            
+                            </Popover> */}
+                            {/* <p><b>Donate</b> the food by initiating the request voluntarily & the person in need can confirm.</p>
+                            <p><b>Search Needs</b> & donate food for the needs raised around your area/city.</p> */}
                         </div>
                         <div className="need-btn">
-                            <NavLink to="/app/helpinghand">
+
+
+                            <Card size="small" title={<NavLink to="/app/helpinghand">I am in Need</NavLink>}>
+                                <p><b>Raise</b> a need for food & some noble donar around you can fulfill your request or </p>
+                                <p><b>Search Donation</b> open request voluntarily donar has raised and which meets your need, Confirm it.</p>
+
+                            </Card>
+
+                            {/* <NavLink to="/app/helpinghand">
                                 <Button type="button" className="ant-btn ant-btn ant-btn-link custom-links" >I am in need</Button>
-                            </NavLink>
-                            <Popover content={aboutNeed} title="Need food">
+                            </NavLink> */}
+                            {/* <Popover content={aboutNeed} title="Need food">
                                 <Icon type="info-circle" />
-                            </Popover>
-                            
+                            </Popover> */}
+                            {/* <p><b>Raise</b> a need for food & some noble donar around you can fulfill your request or </p>
+                            <p><b>Search Donation</b> open request voluntarily donar has raised which meets your need, confirm it.</p> */}
+
                         </div>
+
                     </p>}
+
+
                     {this.props.flow === 'donar' && <DonarComponent
                         changeScreen={this.changeScreen}
                         createButtonClass={this.createButtonClass}
                         commonProps={commonProps} />}
+
+
                     {this.props.flow === 'helpinghand' && <HelpingHandComponent
                         changeScreen={this.changeScreen}
                         createButtonClass={this.createButtonClass}
                         commonProps={commonProps} />}
+
 
                     {/* <div>{ad.text}</div>
                         <div id="locationField">
@@ -200,6 +226,9 @@ class AppComponent extends React.Component {
                             }
                             return null;
                         })} */}
+
+
+
 
 
                     {/* {this.props.loading && } */}

@@ -20,7 +20,7 @@ class HelpingHandView extends React.Component {
 
     render() {
 
-        const {auth, setFormItem, showScreen, reqAdded, reqRemoved, fetchProviders, confirmProvideRequest, getFieldDecorator, location} = this.props;
+        const {auth, setFormItem, showScreen, reqAdded, reqRemoved, fetchProviders, mobileNo, confirmProvideRequest, getFieldDecorator, location} = this.props;
         const {selectedCountry, selectedState, selectedCity, selectedArea } = location;
 
         return(
@@ -46,7 +46,7 @@ class HelpingHandView extends React.Component {
                 </Form>
                 {auth.user.username && <div>
                     <Button disabled={!(selectedCity || selectedArea)} className="ant-btn ant-btn-primary" onClick={fetchProviders}>See donations around</Button>
-                    {(selectedCity || selectedArea) && <RequestTable name={auth.user.username}/>}
+                    {(selectedCity || selectedArea) && <RequestTable name={auth.user.username} mobileNo={mobileNo}/>}
                     {(reqAdded.length > 0 || reqRemoved.length > 0) && <Button disabled={!(selectedCity || selectedArea)} className="ant-btn ant-btn-primary confirm-helping-hand-btn" onClick={confirmProvideRequest}>Confirm Changes</Button>}
                 </div>}
             </div>);

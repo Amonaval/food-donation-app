@@ -163,7 +163,7 @@ class HelpingHandComponent extends React.Component {
             <div>
                 <div className="btn-group">
                     <Button className={createButtonClass('raiseNeed')} onClick={() => changeScreen('raiseNeed')}>Raise Need</Button>
-                    <Button className={createButtonClass('helpinghand')} onClick={() => changeScreen('helpinghand')}>Looking food</Button>
+                    <Button className={createButtonClass('helpinghand')} onClick={() => changeScreen('helpinghand')}>Search Donations</Button>
                     <Button className={createButtonClass('searchStatusHH')} onClick={() => changeScreen('searchStatusHH')}>Track Status</Button>
                     {/* <Button disabled className={createButtonClass('y')} onClick={() => changeScreen('registerHH')}>Register as Helping Hand</Button> */}
                 </div>

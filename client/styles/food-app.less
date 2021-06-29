@@ -24,9 +24,23 @@ html{
     .landing-page-btns, .btn-group{
       margin-left: calc(50% - 200px);
       width: 500px;
+      .ant-card {
+        background-color: transparent;
+        width: 80% !important;
+        margin: auto;
+      }
+      p {
+        margin-top: 10px;
+      }
+      a {
+        color: lightblue;
+        text-decoration: underline;
+        font-size: 16px;
+      }
       .need-btn{
-        width: 250px;
-      } 
+        margin-top: 30px;
+       
+      }
     }
 
     .section-category{
@@ -179,6 +193,7 @@ html{
     .ant-form-item-label > label, h1, h2, h3, h4, h5, h6, .ant-table, .ant-form, .ant-form-item, .navbar-item, div, span{
         color: #ddd;
     }
+
     .ant-table-thead > tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td, .ant-table-tbody > tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td, .ant-table-thead > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td, .ant-table-tbody > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td,
     input, .ant-btn span, .ant-form-item-control span, .ant-form-item-control .ant-select-selection-selected-value, .mapboxgl-ctrl-geocoder--suggestion div {
       color: #222 !important;
@@ -315,7 +330,6 @@ html{
   @media screen and (min-width: 721px) {
       
   .map-comp {
-    display: none;
     position: absolute;
     left: 600px;
   }
@@ -339,12 +353,18 @@ html{
 
     .container .landing-page-btns, .container .btn-group {
       margin: auto;
-      width: 380px;
+      width: 100%;
+      float: left;
+      margin-bottom: 40px;
+      margin-top: 20px;
     }
     .container .landing-page-btns .donate-btn, .container .landing-page-btns .need-btn {
-      width: 190px;
+      // width: 190px;
       float: left;
+      margin-bottom: 20px;
     }
+
+ 
 
     .aboutus{
       .aboutus-title{
@@ -397,6 +417,9 @@ html{
     
     .section.auth {
       margin-top: 40px;
+    }
+    .map-comp {
+     display: none;
     }
 }
 

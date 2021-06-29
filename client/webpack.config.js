@@ -102,6 +102,7 @@ const config = {
         },
         index
     ],
+    devtool: 'source-map',
     optimization: optimization,
     devServer: {
         headers: { "Access-Control-Allow-Origin": "*" },

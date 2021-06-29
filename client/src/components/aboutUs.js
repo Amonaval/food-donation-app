@@ -10,30 +10,37 @@ class AboutUs extends Component {
               <div className="container">
                   <div className="aboutus-title">Feed the Need - NGO free distributed & scalable food donation system</div>
                   <div>
-                      <p> Every person feels to feed the hunger, more specifically in difficult times like covid-19 & more happily if they are assured that its been reaching the need. </p>
-                      <br/>
+                      <p> Every person feels to feed the hunger, more specifically in difficult times like covid & more happily if they are assured that its been reaching the need. </p>
+                      
                       <p>Having NGO as centralized system of donation is not scalable, reachable & feasible at every place.</p>
+                  
+                      <p><b>Idea is to have decentralized food donation system.</b></p>
                       <br/>
-                      <p>Idea is to have decentralized food donation.</p>
-                      <br/>
-                      <p><b>I want to donate</b> - 
+                      <p><b>I want to donate </b> - 
                             Individual wants to donate food on specific date of specific quantity. 
                             Person can look for food needs around his/her area. Can confirm the request.
                             He may also initiate donation request voluntarily</p>
                       <br/>
-                      <p><b>NEEDY </b>- Person is in need of food for specific date & time. 
+                      <p><b>I am in need</b>- Person is in need of food for specific date & time. 
                       Person can raise food needs request or can confirm matching request around his/her area if any.</p>
-                     
-                      HELPING HAND can raise request as needy on behalf of poor who are being noticed by HELPING HAND person/group. 
-                      Poor might not be using the app so HELPING HAND would be the one who would be collecting the food from PROVIDER & 
-                      will provide the food to NEEDY.
-                      (E.g Some NGO group/person, voluteers etc)
-
-                     
                       <br/>
-                      <p><b></b> </p>
-                      <hr></hr>
-                      {/* <p><b>BUSINESS VALUE</b> -- This idea itself can be considered as prototype implementation of business sceanrio. 
+                     
+                      <p><b>Helping hand</b>- can raise request as needy on behalf of poor who are being noticed by them as individual or NGO voluteers. 
+                      Poor might not be using the app so these people would be the one who would be collecting the food from DONARS & will provide to needy working as mediator.</p>
+                      
+                      <br />
+                            
+                      <p><b>Peer to Peer</b> donation as</p>
+                      <ul>
+                          <li>Individual - Individual</li>
+                          <li>NGO - Individual</li>
+                          <li>NGO - NGO</li>
+                          <li>Individual - NGO</li>
+                      </ul>
+                      <p>or any which ways possible you can contribute to a society</p>
+
+                      {/*<hr></hr>
+                      <p><b>BUSINESS VALUE</b> -- This idea itself can be considered as prototype implementation of business sceanrio. 
                         Many scenarios can use this underlying model.
                         <div>Food is the transactional entity which can be replaced with any other business entity</div>
                       </p> */}

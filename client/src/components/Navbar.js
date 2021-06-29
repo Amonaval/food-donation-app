@@ -44,7 +44,7 @@ export default class Navbar extends Component {
                                 {!isAuthenticated && !user && (
                                     <Fragment>
                                         <NavLink to="/aboutus" className="button is-light">
-                                            How it works
+                                            More Info
                                         </NavLink>
                                         <NavLink to="/register" className="button is-primary">
                                             Register
